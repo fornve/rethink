@@ -1,6 +1,6 @@
 const r = require("rethinkdb")
 const app = require('./app')
-const User = require('./user')
+const User = require('./models/user')
 
 app.ready().then(() => {
   console.log( 'Starting application');
@@ -11,23 +11,4 @@ app.ready().then(() => {
 		cursor.each( console.log );
     console.log( '*------------- END --------------*')
   });
-
-  let user = new User({
-    email: 'marek@dajnowski.net',
-    name: 'Marek Dajnowski',
-  });
-
-  user.address = 'wiatrakowa 15';
-
-  user.save().then( (data) => {
-    console.log( 'saved' );
-    console.log( user )
-  } )
-  .catch( (e) => {
-    console.log( 'saving error' );
-    console.log( e )
-  });
-
-  console.log( user );
-
 }).catch( (e) => console.log );

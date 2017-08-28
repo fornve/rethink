@@ -17,12 +17,35 @@ class App {
         .then( (connection) => {
           _base.rethinkdb.connection = connection;
           console.log( 'connected rethinkDB');
-          resolve();
+
+          _base.rethinkPrepareDB().then( () => { resolve(); } );
         })
         .catch((e) => {
           reject(e);
         });
     });
+  }
+  rethinkPrepareTable(table_name) {
+    return new Promise( (resolve, reject) => {
+      console.log( 'prepare '+ table_name );
+
+      var tableOptions = {
+        primaryKey: 'id',
+        durability: 'hard'
+      };
+      try {
+        r.tableCreate(table_name, tableOptions).run(this.rethinkdb.connection, () => {
+          resolve();
+        } );
+      } catch (e) {
+        reject( e );
+      }
+    });
+  }
+  rethinkPrepareDB() {
+    let jobs = [];
+    jobs.push(this.rethinkPrepareTable('user'));
+    return Promise.all(jobs);
   }
 }
 
